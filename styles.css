@@ -1,0 +1,438 @@
+:root {
+    --gpm-purple: #bd93f9;
+    --gpm-bg-1: rgba(247, 248, 255, 0.94);
+    --gpm-bg-2: rgba(233, 238, 248, 0.92);
+    --gpm-border: rgba(20, 24, 35, 0.10);
+    --gpm-muted: #5f6778;
+    --gpm-text: #1e2230;
+    --gpm-shadow: 0 22px 48px rgba(23, 28, 40, 0.14);
+    --gpm-surface: rgba(255, 255, 255, 0.78);
+    --gpm-surface-2: rgba(243, 246, 252, 0.92);
+    --gpm-surface-hover: rgba(255, 255, 255, 0.98);
+    --gpm-accent-soft: rgba(189, 147, 249, 0.16);
+    --gpm-input-bg: rgba(255, 255, 255, 0.84);
+    --gpm-input-border: rgba(23, 28, 40, 0.12);
+    --gpm-scrollbar: rgba(102, 112, 135, 0.42);
+    --gpm-scrollbar-track: rgba(0, 0, 0, 0.05);
+    --gpm-chip-bg: rgba(189, 147, 249, 0.14);
+}
+
+#gemini-nav-panel,
+#gemini-nav-panel * {
+    box-sizing: border-box;
+}
+
+#gemini-nav-panel {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    /* nudged wider so action buttons can fit without wrapping */
+    width: min(360px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+    z-index: 2147483646;
+    display: grid;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    border-radius: 18px;
+    border: 1px solid var(--gpm-border);
+    color: var(--gpm-text);
+    background:
+        radial-gradient(circle at 16% 8%, rgba(189, 147, 249, 0.2), transparent 42%),
+        linear-gradient(160deg, var(--gpm-bg-1), var(--gpm-bg-2));
+    box-shadow: var(--gpm-shadow);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    transition: width 0.24s ease, height 0.24s ease, border-radius 0.24s ease;
+    /* hide accidental horizontal overflow (keeps shadows and vertical overflow visible) */
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding-top: 8px;
+    font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#gemini-nav-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 30%);
+    z-index: 0;
+}
+
+#gemini-nav-panel.gpm-minimized {
+    /* compact mini launcher */
+    width: 88px;
+    height: 88px;
+    max-height: 88px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    touch-action: none;
+    padding: 8px;
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+
+#gpm-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px 12px 14px;
+    border-bottom: 1px solid var(--gpm-input-border);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    position: relative;
+    z-index: 90;
+    background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(243,246,252,0.92));
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+#gemini-nav-panel.gpm-dragging,
+#gemini-nav-panel.gpm-dragging * {
+    cursor: grabbing !important;
+    user-select: none;
+}
+
+#gpm-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+#gpm-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: var(--gpm-purple);
+    white-space: nowrap;
+    text-shadow: 0 0 18px rgba(189, 147, 249, 0.28);
+}
+
+#gpm-count {
+    font-size: 11px;
+    color: var(--gpm-muted);
+}
+
+#gpm-toggle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--gpm-text);
+    background: var(--gpm-surface-2);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+    transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+    overflow: hidden;
+}
+
+/* refresh button near header toggle */
+#gpm-refresh {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--gpm-text);
+    background: var(--gpm-surface-2);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+    margin-right: 8px;
+    transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+#gpm-refresh:hover {
+    transform: scale(1.06);
+    background: rgba(189, 147, 249, 0.12);
+}
+
+/* reset button removed */
+
+#gpm-toggle:hover {
+    transform: scale(1.06);
+    background: rgba(189, 147, 249, 0.18);
+    box-shadow: 0 6px 18px rgba(189, 147, 249, 0.14);
+}
+
+#gpm-action-bar {
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    align-items: center;
+    position: relative;
+    z-index: 6;
+    margin-top: 6px; /* ensure action bar sits below header */
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+#gpm-action-top { display: flex; align-items: center; justify-content: flex-start; }
+#gpm-actions-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.gpm-btn {
+    border: 1px solid var(--gpm-input-border);
+    background: var(--gpm-surface);
+    color: var(--gpm-text);
+    border-radius: 10px;
+    min-height: 32px;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+    /* size to content so multiple buttons can fit on one line */
+    flex: 0 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.gpm-btn:hover {
+    border-color: rgba(189, 147, 249, 0.75);
+    background: var(--gpm-accent-soft);
+    transform: translateY(-2px);
+}
+
+/* ensure tabs don't shrink too small beside buttons */
+#gpm-tabs { flex: 0 0 auto; }
+
+@media (max-width: 640px) {
+    .gpm-btn { font-size: 12px; padding: 6px 8px; }
+    #gpm-search { width: calc(100% - 24px); }
+}
+
+@media (min-width: 900px) {
+    .gpm-btn { max-width: none; flex: 0 0 auto; }
+}
+
+#gpm-search {
+    margin: 0 12px 12px;
+    width: calc(100% - 24px);
+    border-radius: 11px;
+    border: 1px solid var(--gpm-input-border);
+    background: var(--gpm-input-bg);
+    color: var(--gpm-text);
+    font-size: 13px;
+    padding: 11px 12px;
+    outline: none;
+}
+
+#gpm-search:focus {
+    border-color: var(--gpm-purple);
+    box-shadow: 0 0 0 1px rgba(189, 147, 249, 0.36);
+}
+
+#gpm-prompt-list-wrap {
+    /* use padding internally so children don't cause horizontal overflow */
+    padding: 0 12px 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    height: min(350px, calc(100vh - 260px));
+}
+
+#gpm-prompt-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scrollbar-width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 6px;
+    height: 100%;
+}
+
+.gpm-card {
+    width: 100%;
+    border: 1px solid var(--gpm-input-border);
+    border-left: 3px solid transparent;
+    border-radius: 12px;
+    background: var(--gpm-surface);
+    color: var(--gpm-text);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.gpm-card:hover {
+    border-color: rgba(189, 147, 249, 0.45);
+    background: var(--gpm-surface-hover);
+}
+
+.gpm-card.gpm-selected {
+    border-color: rgba(189, 147, 249, 0.9);
+    background: var(--gpm-accent-soft);
+}
+
+.gpm-card.gpm-active {
+    border-left-color: #ffffff;
+}
+
+.gpm-checkbox {
+    margin-top: 2px;
+    width: 14px;
+    height: 14px;
+    accent-color: var(--gpm-purple);
+    cursor: pointer;
+}
+
+.gpm-card-title {
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--gpm-text);
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.gpm-empty,
+#gpm-status {
+    font-size: 12px;
+    color: var(--gpm-muted);
+    text-align: center;
+    padding: 8px;
+}
+
+#gemini-nav-panel.gpm-minimized #gpm-action-bar,
+#gemini-nav-panel.gpm-minimized #gpm-search,
+#gemini-nav-panel.gpm-minimized #gpm-prompt-list,
+#gemini-nav-panel.gpm-minimized #gpm-prompt-list-wrap,
+#gemini-nav-panel.gpm-minimized #gpm-counter-bar,
+#gemini-nav-panel.gpm-minimized #gpm-title,
+#gemini-nav-panel.gpm-minimized #gpm-count,
+#gemini-nav-panel.gpm-minimized #gpm-status {
+    display: none;
+}
+
+#gemini-nav-panel.gpm-minimized #gpm-header {
+    border-bottom: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#gemini-nav-panel.gpm-minimized #gpm-title-wrap {
+    display: none;
+}
+
+#gemini-nav-panel.gpm-minimized #gpm-refresh {
+    display: none;
+}
+
+#gemini-nav-panel.gpm-minimized #gpm-header-controls {
+    width: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+/* compact circular controls shown when minimized */
+#gemini-nav-panel.gpm-minimized #gpm-toggle {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    margin: 0;
+    background: var(--gpm-surface-2);
+    border: 1px solid var(--gpm-input-border);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.22);
+    transition: transform 0.12s ease, background 0.12s ease;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* ensure any icon inside controls scales and doesn't overflow */
+.gpm-control-icon,
+#gpm-toggle svg {
+    width: 56%;
+    height: 56%;
+    max-width: 24px;
+    max-height: 24px;
+    display: block;
+}
+
+/* keep header content fully visible */
+#gpm-header { overflow: visible; min-height: 60px; }
+
+#gemini-nav-panel.gpm-minimized #gpm-toggle:hover {
+    transform: translateY(-2px);
+    background: rgba(189,147,249,0.12);
+}
+
+#gpm-prompt-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+#gpm-prompt-list::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--gpm-scrollbar);
+}
+
+#gpm-prompt-list::-webkit-scrollbar-track {
+    background: var(--gpm-scrollbar-track);
+}
+
+@media (max-width: 900px) {
+    #gemini-nav-panel {
+        right: 8px;
+        top: 8px;
+        width: min(340px, calc(100vw - 16px));
+        max-height: calc(100vh - 16px);
+    }
+}
+
+/* new UI parts */
+#gpm-header-controls { display:flex; gap:8px; align-items:center; }
+/* keep base button behavior; visual styles are defined per-button */
+#gpm-header-controls button { cursor:pointer; }
+
+#gpm-tabs { display:inline-flex; gap:8px; align-items:center; margin-right:8px; }
+.gpm-tab { background: var(--gpm-surface); border: 1px solid var(--gpm-input-border); padding:6px 8px; border-radius:8px; color:var(--gpm-text); cursor:pointer; }
+.gpm-tab--active { background: var(--gpm-chip-bg); border-color: rgba(189,147,249,0.6); }
+
+#gpm-prompt-list-wrap { position: relative; }
+
+#gpm-counter-bar { display:flex; gap:10px; align-items:center; padding:8px 12px; border-top:1px solid var(--gpm-input-border); font-size:12px; color:var(--gpm-muted); }
+
+.gpm-fav-btn { background: transparent; border: none; color: var(--gpm-purple); font-size: 16px; cursor:pointer; align-self: center; padding: 4px; }
+
+/* ensure counters are usable on small panels */

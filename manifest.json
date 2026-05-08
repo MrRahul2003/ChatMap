@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini Pro Manager",
+  "version": "4.0.0",
+  "description": "Conversation navigator and exporter for Gemini with search, selection, summaries, copy, and PDF export.",
+  "permissions": ["storage", "clipboardWrite"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://gemini.google.com/*",
+        "https://gemini.googleusercontent.com/*",
+        "https://chatgpt.com/*",
+        "https://www.chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://*.openai.com/*",
+        "https://claude.ai/*",
+        "https://*.claude.ai/*",
+        "https://app.slack.com/*"
+      ],
+      "css": ["styles.css"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
